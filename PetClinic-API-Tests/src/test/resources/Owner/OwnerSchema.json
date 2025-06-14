@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["id", "firstName", "lastName", "address", "city", "telephone", "pets"],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "telephone": {
+      "type": "string",
+      "pattern": "^[0-9]*$"
+    },
+    "pets": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+}
