@@ -1,4 +1,3 @@
-version: '3'
 services:
   spring-petclinic:
     image: arey/springboot-petclinic
@@ -7,3 +6,20 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=hsqldb,prod
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:8080/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api-tests:
+    build:
+      context: ./PetClinic-API-Tests
+    environment: 
+    - TARGET_HOST=spring-petclinic
+    depends_on:
+      spring-petclinic:
+        condition: service_healthy
+    volumes:
+      - ./target/surefire-reports:/tests/target/surefire-reports
+      - ./target/reports:/tests/target/reports

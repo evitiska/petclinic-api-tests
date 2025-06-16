@@ -1,5 +1,7 @@
 package Pets;
+import Base.PetClinicBaseAPITest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.*;
@@ -9,7 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class PetsTests {
+public class PetsTests extends PetClinicBaseAPITest {
     private static int PET_TYPE_CAT = 1;
     private static int PET_TYPE_INVALID = 999;
     int firstOwnerId;

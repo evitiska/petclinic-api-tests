@@ -1,4 +1,6 @@
 package Owner;
+import Base.PetClinicBaseAPITest;
+import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.*;
@@ -10,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class OwnerTests {
+public class OwnerTests extends PetClinicBaseAPITest {
 
     int firstOwnerId;
 
