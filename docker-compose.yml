@@ -21,5 +21,4 @@ services:
       spring-petclinic:
         condition: service_healthy
     volumes:
-      - ./target/surefire-reports:/tests/target/surefire-reports
-      - ./target/reports:/tests/target/reports
+      - ./PetClinic-API-Tests/target:/tests/target

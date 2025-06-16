@@ -21,10 +21,6 @@ jobs:
         run: |
           docker compose up --abort-on-container-exit --exit-code-from api-tests
 
-      - name: Copy artifacts container
-        run: |
-          docker cp $(docker compose ps -q api-tests):/tests/target ./PetClinic-API-Tests/target
-
       - name: Upload Surefire XML reports
         uses: actions/upload-artifact@v4
         with:
@@ -35,4 +31,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: surefire-html-report
-          path: PetClinic-API-Tests/target/site
+          path: PetClinic-API-Tests/target/reports
