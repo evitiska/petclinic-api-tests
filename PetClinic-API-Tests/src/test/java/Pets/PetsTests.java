@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PetsTests {
-    private static int PET_TYPE_CAT = 0;
+    private static int PET_TYPE_CAT = 1;
     private static int PET_TYPE_INVALID = 999;
     int firstOwnerId;
     int firstPetId;
@@ -57,7 +57,6 @@ public class PetsTests {
                 .statusCode(500); // In reality this should probably return a 404.
     }
 
-    // Add pet to owner
     @Test
     public void addPetToValidOwner() throws JsonProcessingException {
         AddPetPayload payload = new AddPetPayload("Test-Pet", PET_TYPE_CAT, "2025-06-02");
@@ -84,7 +83,6 @@ public class PetsTests {
                 .statusCode(500); // This should probably return 400
     }
 
-    // Alter a pet
     @Test
     public void editPetInformation() throws JsonProcessingException {
         EditPetPayload payload = new EditPetPayload(firstPetId, "Test-Pet", 2, "2025-06-02");
