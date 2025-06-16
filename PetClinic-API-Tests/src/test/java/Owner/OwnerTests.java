@@ -37,7 +37,7 @@ public class OwnerTests {
                 .get("owners/list") // Note: this call is not listed in the API spec.
                 .then()
                 .statusCode(200)
-                .body(matchesJsonSchemaInClasspath("Owner/OwnerListSchema.json"));
+                .body(matchesJsonSchemaInClasspath("schemas/Owner/OwnerListSchema.json"));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class OwnerTests {
                 .get("owners/{ownerId}")
                 .then()
                 .statusCode(200)
-                .body(matchesJsonSchemaInClasspath("Owner/OwnerSchema.json"));
+                .body(matchesJsonSchemaInClasspath("schemas/Owner/OwnerSchema.json"));
 
     }
 
