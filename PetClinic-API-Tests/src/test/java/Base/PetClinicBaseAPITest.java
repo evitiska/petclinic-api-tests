@@ -1,19 +1,18 @@
 package Base;
 
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.TestInstance;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class PetClinicBaseAPITest {
 
-        @BeforeAll
-        public void setup() {
+        static {
             String targetHost = System.getenv("TARGET_HOST");
             if (targetHost == null || targetHost.isEmpty()) {
                 targetHost = "localhost";
             }
 
-            RestAssured.proxy(targetHost, 8080);
+            RestAssured.baseURI = "http://" + targetHost;
+            RestAssured.port = 8080;
+
+            System.out.println("🔗 Using baseURI [" + RestAssured.baseURI + ":" + RestAssured.port + "]" );
         }
 }
