@@ -1,6 +1,6 @@
 package Owner;
 import Base.PetClinicBaseAPITest;
-import io.restassured.RestAssured;
+import DTO.Owner;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.*;
@@ -28,7 +28,7 @@ public class OwnerTests extends PetClinicBaseAPITest {
 
         int firstOwnerId = response.path("[0].id");
 
-        assertNotNull(firstOwnerId);
+        assertNotNull(firstOwnerId, "Cannot extract existing owner ID");
         this.firstOwnerId = firstOwnerId;
     }
 

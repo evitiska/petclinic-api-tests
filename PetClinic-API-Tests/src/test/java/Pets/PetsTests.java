@@ -1,7 +1,7 @@
 package Pets;
 import Base.PetClinicBaseAPITest;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.restassured.RestAssured;
+import DTO.AddPetPayload;
+import DTO.EditPetPayload;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.*;
@@ -30,8 +30,8 @@ public class PetsTests extends PetClinicBaseAPITest {
         int firstOwnerId = response.path("[0].id");
         int firstPetId = response.path("[0].pets[0].id");
 
-        assertNotNull(firstOwnerId);
-        assertNotNull(firstPetId);
+        assertNotNull(firstOwnerId, "Cannot extract existing owner ID");
+        assertNotNull(firstPetId, "Cannot extract existing pet ID");
         this.firstOwnerId = firstOwnerId;
         this.firstPetId = firstPetId;
     }
@@ -60,7 +60,7 @@ public class PetsTests extends PetClinicBaseAPITest {
     }
 
     @Test
-    public void addPetToValidOwner() throws JsonProcessingException {
+    public void addPetToValidOwner() {
         AddPetPayload payload = new AddPetPayload("Test-Pet", PET_TYPE_CAT, "2025-06-02");
         given()
                 .when()
@@ -69,11 +69,11 @@ public class PetsTests extends PetClinicBaseAPITest {
                 .pathParam("ownerId", firstOwnerId)
                 .post("owners/{ownerId}/pets")
                 .then()
-                .statusCode(204); // According to the spec, this should return 201 and the newly created pet.
+                .statusCode(201); // This returns 204 in reality
     }
 
     @Test
-    public void addPetToValidOwnerWithInvalidType() throws JsonProcessingException {
+    public void addPetToValidOwnerWithInvalidType() {
         AddPetPayload payload = new AddPetPayload("Test-Pet", PET_TYPE_INVALID, "2025-06-02");
         given()
                 .when()
@@ -86,7 +86,7 @@ public class PetsTests extends PetClinicBaseAPITest {
     }
 
     @Test
-    public void editPetInformation() throws JsonProcessingException {
+    public void editPetInformation() {
         EditPetPayload payload = new EditPetPayload(firstPetId, "Test-Pet", 2, "2025-06-02");
         given()
                 .when()
@@ -96,6 +96,6 @@ public class PetsTests extends PetClinicBaseAPITest {
                 .pathParam("petId", firstPetId)
                 .put("owners/{ownerId}/pets/{petId}")
                 .then()
-                .statusCode(204); // According to the spec, this should return 201 and the newly created pet.
+                .statusCode(204);
     }
 }

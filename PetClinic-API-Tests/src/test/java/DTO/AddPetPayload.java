@@ -1,4 +1,4 @@
-package Pets;
+package DTO;
 
 public class AddPetPayload {
     public String name;

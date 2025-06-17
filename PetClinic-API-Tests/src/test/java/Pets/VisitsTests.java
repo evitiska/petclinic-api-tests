@@ -1,6 +1,7 @@
 package Pets;
 
 import Base.PetClinicBaseAPITest;
+import DTO.AddPetVisitPayload;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,8 +28,8 @@ public class VisitsTests extends PetClinicBaseAPITest {
         int firstOwnerId = response.path("[0].id");
         int firstPetId = response.path("[0].pets[0].id");
 
-        assertNotNull(firstOwnerId);
-        assertNotNull(firstPetId);
+        assertNotNull(firstOwnerId, "Cannot extract existing owner ID");
+        assertNotNull(firstPetId, "Cannot extract existing pet ID");
         this.firstOwnerId = firstOwnerId;
         this.firstPetId = firstPetId;
     }

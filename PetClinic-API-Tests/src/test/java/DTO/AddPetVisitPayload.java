@@ -1,4 +1,4 @@
-package Pets;
+package DTO;
 
 public class AddPetVisitPayload {
         public String date;
