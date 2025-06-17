@@ -1,47 +1,22 @@
 package Pets;
 import Base.PetClinicBaseAPITest;
+import Base.TestData;
 import DTO.AddPetPayload;
 import DTO.EditPetPayload;
-import io.restassured.response.Response;
 import static io.restassured.RestAssured.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
 public class PetsTests extends PetClinicBaseAPITest {
     private static int PET_TYPE_CAT = 1;
     private static int PET_TYPE_INVALID = 999;
-    int firstOwnerId;
-    int firstPetId;
-
-    @BeforeAll
-    public void setup() {
-        Response response =
-                given()
-                        .when()
-                        .get("owners/list") // Note: this call is not listed in the API spec.
-                        .then()
-                        .extract()
-                        .response();
-
-        int firstOwnerId = response.path("[0].id");
-        int firstPetId = response.path("[0].pets[0].id");
-
-        assertNotNull(firstOwnerId, "Cannot extract existing owner ID");
-        assertNotNull(firstPetId, "Cannot extract existing pet ID");
-        this.firstOwnerId = firstOwnerId;
-        this.firstPetId = firstPetId;
-    }
-
     @Test
     public void getPetByValidId() {
         given()
                 .when()
-                .pathParam("ownerId", firstOwnerId)
-                .pathParam("petId", firstPetId)
+                .pathParam("ownerId", TestData.getOwnerId())
+                .pathParam("petId", TestData.getPetId())
                 .get("owners/{ownerId}/pets/{petId}")
                 .then()
                 .statusCode(200)
@@ -49,51 +24,55 @@ public class PetsTests extends PetClinicBaseAPITest {
     }
 
     @Test
+    @Tag("spec-deviation")
     public void getPetByInvalidId() {
         given()
                 .when()
-                .pathParam("ownerId", firstOwnerId)
-                .pathParam("petId", 182318237)
+                .pathParam("ownerId", TestData.getOwnerId())
+                .pathParam("petId", -TestData.getPetId())
                 .get("owners/{ownerId}/pets/{petId}")
                 .then()
-                .statusCode(500); // In reality this should probably return a 404.
+                .statusCode(400)
+                .body(matchesJsonSchemaInClasspath("schemas/ErrorSchema.json"));
     }
 
     @Test
+    @Tag("spec-deviation")
     public void addPetToValidOwner() {
         AddPetPayload payload = new AddPetPayload("Test-Pet", PET_TYPE_CAT, "2025-06-02");
         given()
                 .when()
                 .contentType("application/json")
                 .body(payload)
-                .pathParam("ownerId", firstOwnerId)
+                .pathParam("ownerId", TestData.getOwnerId())
                 .post("owners/{ownerId}/pets")
                 .then()
                 .statusCode(201); // This returns 204 in reality
     }
 
     @Test
+    @Tag("spec-deviation")
     public void addPetToValidOwnerWithInvalidType() {
         AddPetPayload payload = new AddPetPayload("Test-Pet", PET_TYPE_INVALID, "2025-06-02");
         given()
                 .when()
                 .contentType("application/json")
                 .body(payload)
-                .pathParam("ownerId", firstOwnerId)
+                .pathParam("ownerId", TestData.getOwnerId())
                 .post("owners/{ownerId}/pets")
                 .then()
-                .statusCode(500); // This should probably return 400
+                .statusCode(400);
     }
 
     @Test
     public void editPetInformation() {
-        EditPetPayload payload = new EditPetPayload(firstPetId, "Test-Pet", 2, "2025-06-02");
+        EditPetPayload payload = new EditPetPayload(TestData.getPetId(), "Test-Pet", 2, "2025-06-02");
         given()
                 .when()
                 .contentType("application/json")
                 .body(payload)
-                .pathParam("ownerId", firstOwnerId)
-                .pathParam("petId", firstPetId)
+                .pathParam("ownerId", TestData.getOwnerId())
+                .pathParam("petId", TestData.getPetId())
                 .put("owners/{ownerId}/pets/{petId}")
                 .then()
                 .statusCode(204);

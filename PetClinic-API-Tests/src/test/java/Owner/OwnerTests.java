@@ -1,36 +1,14 @@
 package Owner;
 import Base.PetClinicBaseAPITest;
+import Base.TestData;
 import DTO.Owner;
-import io.restassured.response.Response;
 import static io.restassured.RestAssured.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OwnerTests extends PetClinicBaseAPITest {
-
-    int firstOwnerId;
-
-    @BeforeAll
-    public void setup() {
-        Response response =
-                given()
-                        .when()
-                        .get("owners/list") // Note: this call is not listed in the API spec.
-                        .then()
-                        .extract()
-                        .response();
-
-        int firstOwnerId = response.path("[0].id");
-
-        assertNotNull(firstOwnerId, "Cannot extract existing owner ID");
-        this.firstOwnerId = firstOwnerId;
-    }
 
     @Test
     public void getAllOwners() {
@@ -43,6 +21,7 @@ public class OwnerTests extends PetClinicBaseAPITest {
     }
 
     @Test
+    @Tag("spec-deviation")
     public void createNewOwner_withValidBody() {
         Owner requestBodyOwner = new Owner("Bart", "Simpson", "Sesame Street", "Amsterdam", "06123456789");
 
@@ -52,7 +31,8 @@ public class OwnerTests extends PetClinicBaseAPITest {
                 .when()
                 .post("owners")
                 .then()
-                .statusCode(201);
+                .statusCode(201)
+                .body(matchesJsonSchemaInClasspath("schemas/Owner/OwnerSchema.json"));
     }
 
     @Test
@@ -65,7 +45,8 @@ public class OwnerTests extends PetClinicBaseAPITest {
                 .when()
                 .post("owners")
                 .then()
-                .statusCode(400);
+                .statusCode(400)
+                .body(matchesJsonSchemaInClasspath("schemas/ErrorSchema.json"));
     }
     @Test
     public void createNewOwner_withoutBody() {
@@ -74,14 +55,15 @@ public class OwnerTests extends PetClinicBaseAPITest {
                 .when()
                 .post("owners")
                 .then()
-                .statusCode(400);
+                .statusCode(400)
+                .body(matchesJsonSchemaInClasspath("schemas/ErrorSchema.json"));
     }
 
     @Test
     public void getOwner_byValidId() {
         given()
                 .when()
-                .pathParam("ownerId", firstOwnerId)
+                .pathParam("ownerId", TestData.getOwnerId())
                 .get("owners/{ownerId}")
                 .then()
                 .statusCode(200)
@@ -90,13 +72,14 @@ public class OwnerTests extends PetClinicBaseAPITest {
     }
 
     @Test
+    @Tag("spec-deviation")
     public void getOwner_byInvalidId() {
         given()
                 .when()
-                .pathParam("ownerId", -firstOwnerId)
+                .pathParam("ownerId", -TestData.getOwnerId())
                 .get("owners/{ownerId}")
                 .then()
-                .statusCode(500); // Note: The API spec says this should be HTTP 500 instead.
+                .statusCode(400);
     }
 
     @Test
@@ -107,7 +90,7 @@ public class OwnerTests extends PetClinicBaseAPITest {
                 .contentType("application/json")
                 .body(body)
                 .when()
-                .pathParam("ownerId", firstOwnerId)
+                .pathParam("ownerId", TestData.getOwnerId())
                 .put("owners/{ownerId}")
                 .then()
                 .statusCode(200)
@@ -125,18 +108,19 @@ public class OwnerTests extends PetClinicBaseAPITest {
                 .contentType("application/json")
                 .body(body)
                 .when()
-                .pathParam("ownerId", firstOwnerId)
+                .pathParam("ownerId", TestData.getOwnerId())
                 .put("owners/{ownerId}")
                 .then()
-                .statusCode(400);
+                .statusCode(400)
+                .body(matchesJsonSchemaInClasspath("schemas/ErrorSchema.json"));
     }
 
     @Test
-    @Disabled("Endpoint is returning 405 for a valid id")
+    @Tag("spec-deviation")
     public void deleteOwner_byValidId() {
         given()
                 .when()
-                .pathParam("ownerId", firstOwnerId)
+                .pathParam("ownerId", TestData.getOwnerId())
                 .delete("owners/{ownerId}")
                 .then()
                 .statusCode(200);

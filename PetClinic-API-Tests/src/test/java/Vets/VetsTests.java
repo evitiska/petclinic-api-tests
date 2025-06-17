@@ -1,13 +1,12 @@
 package Vets;
 
 import Base.PetClinicBaseAPITest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class VetsTests extends PetClinicBaseAPITest {
     @Test
     public void getAllVets() {
@@ -20,6 +19,7 @@ public class VetsTests extends PetClinicBaseAPITest {
     }
 
     @Test
+    @Tag("spec-deviation")
     public void addNewVet() {
         given()
                 .when()

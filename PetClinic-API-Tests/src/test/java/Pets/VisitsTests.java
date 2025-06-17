@@ -1,61 +1,42 @@
 package Pets;
 
 import Base.PetClinicBaseAPITest;
+import Base.TestData;
 import DTO.AddPetVisitPayload;
-import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class VisitsTests extends PetClinicBaseAPITest {
-    int firstOwnerId;
-    int firstPetId;
-
-    @BeforeAll
-    public void setup() {
-        Response response =
-                given()
-                        .when()
-                        .get("owners/list") // Note: this call is not listed in the API spec.
-                        .then()
-                        .extract()
-                        .response();
-
-        int firstOwnerId = response.path("[0].id");
-        int firstPetId = response.path("[0].pets[0].id");
-
-        assertNotNull(firstOwnerId, "Cannot extract existing owner ID");
-        assertNotNull(firstPetId, "Cannot extract existing pet ID");
-        this.firstOwnerId = firstOwnerId;
-        this.firstPetId = firstPetId;
-    }
 
     @Test
+    @Tag("spec-deviation")
     public void getPetVisits() {
         given()
                 .when()
-                .pathParam("ownerId", firstOwnerId)
-                .pathParam("petId", firstPetId)
+                .pathParam("ownerId", TestData.getOwnerId())
+                .pathParam("petId", TestData.getPetId())
                 .get("owners/{ownerId}/pets/{petId}/visits")
                 .then()
-                .statusCode(200);
+                .statusCode(200)
+                .body(matchesJsonSchemaInClasspath("schemas/Pet/PetVisitsSchema.json"));
     }
 
     @Test
+    @Tag("spec-deviation")
     public void addPetVisit() {
         AddPetVisitPayload payload = new AddPetVisitPayload("2025-06-17", "A regular checkup");
         given()
                 .when()
                 .contentType("application/json")
-                .pathParam("ownerId", firstOwnerId)
-                .pathParam("petId", firstPetId)
+                .pathParam("ownerId", TestData.getOwnerId())
+                .pathParam("petId", TestData.getPetId())
                 .body(payload)
                 .post("owners/{ownerId}/pets/{petId}/visits")
                 .then()
-                .statusCode(201); // Actually returns 204 here.
+                .statusCode(201) // Actually returns 204 here.
+                .body(matchesJsonSchemaInClasspath("schemas/Pet/PetVisitSchema.json"));
     }
 }
